@@ -1,5 +1,5 @@
 import re
-from typing import Any, List, String
+from typing import Union, List
 
 class SimpleTokenizer:
     def __init__(self, lower=True):
@@ -18,7 +18,7 @@ class SimpleTokenizer:
         tokens = re.findall(r"[a-zA-Z0-9]+(?:'[a-z]+)?", text)
         return tokens
 
-    def build_vocab(self, texts: Any[String, List]):
+    def build_vocab(self, texts: Union[str, List[str]]):
         # texts: list of strings
         if not isinstance(texts, list):
             texts = [texts]
@@ -48,7 +48,7 @@ class SimpleTokenizer:
             for token, idx in self.vocab.items():
                 f.write(f"{token}\t{idx}\n")
     
-    def update_vocab(self, texts: Any[String, List], filepath=None):
+    def update_vocab(self, texts: Union[str, List[str]], filepath=None):
         """
         Update the vocabulary with new tokens from the given texts.
         Only adds new tokens, keeps existing token-ID pairs unchanged.
