@@ -1,5 +1,5 @@
 import re
-from collections import defaultdict
+from typing import Any, List, String
 
 class SimpleTokenizer:
     def __init__(self, lower=True):
@@ -15,14 +15,18 @@ class SimpleTokenizer:
     def tokenize(self, text):
         if self.lower:
             text = text.lower()
-        tokens = re.findall(r"\b\w+\b", text)
+        tokens = re.findall(r"[a-zA-Z0-9]+(?:'[a-z]+)?", text)
         return tokens
 
-    def build_vocab(self, texts):
+    def build_vocab(self, texts: Any[String, List]):
         # texts: list of strings
+        if not isinstance(texts, list):
+            texts = [texts]
+        
         token_set = set()
         for text in texts:
             token_set.update(self.tokenize(text))
+
         # Add special tokens first
         all_tokens = self.special_tokens + sorted(token_set)
         self.vocab = {token: idx for idx, token in enumerate(all_tokens)}
@@ -44,24 +48,30 @@ class SimpleTokenizer:
             for token, idx in self.vocab.items():
                 f.write(f"{token}\t{idx}\n")
     
-    def update_vocab(self, texts, filepath=None):
+    def update_vocab(self, texts: Any[String, List], filepath=None):
         """
         Update the vocabulary with new tokens from the given texts.
         Only adds new tokens, keeps existing token-ID pairs unchanged.
         If filepath is provided, saves the updated vocab to file.
         """
+        if not isinstance(texts, list):
+            texts = [texts]
+
         # Find new tokens
         new_tokens = set()
         for text in texts:
             new_tokens.update(self.tokenize(text))
+
         # Remove tokens already in vocab
         new_tokens = new_tokens - set(self.vocab.keys())
+
         # Add new tokens with new IDs
         next_id = max(self.vocab.values(), default=-1) + 1
         for token in sorted(new_tokens):
             self.vocab[token] = next_id
             self.inv_vocab[next_id] = token
             next_id += 1
+        
         # Optionally save
         if filepath:
             self.save_vocab(filepath)
@@ -92,11 +102,11 @@ if __name__ == "__main__":
     df = pd.read_csv("data/raw/mle_screening_dataset.csv")
 
     # Combine questions and answers into one list of texts
-    texts = df['question'].tolist() + df['answer'].tolist()
+    texts = [str(x) for x in (df['question'].tolist() + df['answer'].tolist())]
 
-    # Build tokenizer
+    # # Build tokenizer
     tokenizer = SimpleTokenizer(lower=True)
     tokenizer.build_vocab(texts)
 
-    # Save vocabulary
+    # # Save vocabulary
     tokenizer.save_vocab("data/processed/vocab.txt")
