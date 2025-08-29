@@ -43,40 +43,60 @@ class SimpleTokenizer:
         with open(filepath, "w") as f:
             for token, idx in self.vocab.items():
                 f.write(f"{token}\t{idx}\n")
+    
+    def update_vocab(self, texts, filepath=None):
+        """
+        Update the vocabulary with new tokens from the given texts.
+        Only adds new tokens, keeps existing token-ID pairs unchanged.
+        If filepath is provided, saves the updated vocab to file.
+        """
+        # Find new tokens
+        new_tokens = set()
+        for text in texts:
+            new_tokens.update(self.tokenize(text))
+        # Remove tokens already in vocab
+        new_tokens = new_tokens - set(self.vocab.keys())
+        # Add new tokens with new IDs
+        next_id = max(self.vocab.values(), default=-1) + 1
+        for token in sorted(new_tokens):
+            self.vocab[token] = next_id
+            self.inv_vocab[next_id] = token
+            next_id += 1
+        # Optionally save
+        if filepath:
+            self.save_vocab(filepath)
+
+    @classmethod
+    def load_vocab(cls, filepath, lower=True):
+        """Load the vocabulary mapping from a file and return a SimpleTokenizer instance."""
+        vocab = {}
+        with open(filepath, "r") as f:
+            for line in f:
+                token, idx = line.rstrip("\n").split("\t")
+                vocab[token] = int(idx)
+        tokenizer = cls(lower=lower)
+        tokenizer.vocab = vocab
+        tokenizer.inv_vocab = {idx: token for token, idx in vocab.items()}
+        return tokenizer
 
 if __name__ == "__main__":
     import argparse
-    import pandas as pd
     parser = argparse.ArgumentParser(description="Simple Tokenizer Vocabulary Builder")
     parser.add_argument('--db_path', type=str, default="data/raw/mle_screening_dataset.csv", help="Path to the raw CSV dataset")
     parser.add_argument('--output_vocab', type=str, default="data/processed/vocab.txt", help="Path to save vocabulary file")
     args = parser.parse_args()
 
-    # Load the medical Q&A dataset
-    df = pd.read_csv(args.db_path)
-    # Combine all questions and answers
-    texts = list(df['question'].dropna()) + list(df['answer'].dropna())
-    # Build vocabulary
+    import pandas as pd
+
+    # Load your dataset
+    df = pd.read_csv("data/raw/mle_screening_dataset.csv")
+
+    # Combine questions and answers into one list of texts
+    texts = df['question'].tolist() + df['answer'].tolist()
+
+    # Build tokenizer
     tokenizer = SimpleTokenizer(lower=True)
     tokenizer.build_vocab(texts)
-    # Save vocabulary to file
-    tokenizer.save_vocab(args.output_vocab)
 
-    # Example usage
-    tokenizer = SimpleTokenizer()
-    texts = [
-        "Hello, world!",
-        "This is a test.",
-        "Tokenization is important."
-    ]
-    tokenizer.build_vocab(texts)
-    print("Vocabulary:", tokenizer.vocab)
-
-    encoded = tokenizer.encode("Hello, world!")
-    print("Encoded:", encoded)
-
-    decoded = tokenizer.decode(encoded)
-    print("Decoded:", decoded)
-
-    detokenized = tokenizer.detokenize(decoded)
-    print("Detokenized:", detokenized)
+    # Save vocabulary
+    tokenizer.save_vocab("data/processed/vocab.txt")
