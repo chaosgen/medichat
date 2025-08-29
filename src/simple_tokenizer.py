@@ -45,18 +45,24 @@ class SimpleTokenizer:
                 f.write(f"{token}\t{idx}\n")
 
 if __name__ == "__main__":
+    import argparse
     import pandas as pd
+    parser = argparse.ArgumentParser(description="Simple Tokenizer Vocabulary Builder")
+    parser.add_argument('--db_path', type=str, default="data/raw/mle_screening_dataset.csv", help="Path to the raw CSV dataset")
+    parser.add_argument('--output_vocab', type=str, default="data/processed/vocab.txt", help="Path to save vocabulary file")
+    args = parser.parse_args()
+
     # Load the medical Q&A dataset
-    df = pd.read_csv("../data/raw/mle_screening_dataset.csv")
+    df = pd.read_csv(args.db_path)
     # Combine all questions and answers
     texts = list(df['question'].dropna()) + list(df['answer'].dropna())
     # Build vocabulary
     tokenizer = SimpleTokenizer(lower=True)
     tokenizer.build_vocab(texts)
     # Save vocabulary to file
-    with open("../data/processed/vocab.txt", "w") as f:
-        for token, idx in tokenizer.vocab.items():
-            f.write(f"{token}\t{idx}\n")
+    tokenizer.save_vocab(args.output_vocab)
+
+    # Example usage
     tokenizer = SimpleTokenizer()
     texts = [
         "Hello, world!",

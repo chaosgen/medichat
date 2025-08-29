@@ -52,7 +52,13 @@ class MedicalDataProcessor:
         return output_path
 
 if __name__ == "__main__":
-    processor = MedicalDataProcessor("data/raw/mle_screening_dataset.csv", "data/processed")
+    import argparse
+    parser = argparse.ArgumentParser(description="Medical Q&A Data Processor")
+    parser.add_argument('--db_path', type=str, default="data/raw/mle_screening_dataset.csv", help="Path to the raw CSV dataset")
+    parser.add_argument('--output_dir', type=str, default="data/processed", help="Directory to save processed files")
+    args = parser.parse_args()
+
+    processor = MedicalDataProcessor(args.db_path, args.output_dir)
     processor.load_data()
     processor.preprocess_data()
     processor.save_data()
