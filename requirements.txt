@@ -4,3 +4,4 @@ torch
 fastapi
 uvicorn
 pydantic
+pyyaml

@@ -3,17 +3,22 @@ from sklearn.model_selection import train_test_split
 import os
 
 
+from config_loader import config
+
 class MedicalDataProcessor:
-    def __init__(self, data_path, output_path):
-        self.data_path = data_path
-        self.output_path = output_path or os.path.dirname(self.data_path)
+    def __init__(self, data_path=None, output_path=None):
+        self.data_path = data_path or config.get_path('data', 'raw_data_path')
+        self.output_path = output_path or config.get_path('data', 'processed_data_dir')
 
     def load_data(self):
         # Load CSV file into a pandas dataframe
         self.data = pd.read_csv(self.data_path)
         return self.data
 
-    def preprocess_data(self, eval_size=0.1, test_size=0.1):
+    def preprocess_data(self, eval_size=None, test_size=None):
+        # Use config values if not provided
+        eval_size = eval_size if eval_size is not None else config.data['eval_size']
+        test_size = test_size if test_size is not None else config.data['test_size']
         # Drop rows with missing values
         df = self.data.dropna(subset=['question', 'answer']).copy()
 

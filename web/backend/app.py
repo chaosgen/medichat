@@ -29,12 +29,12 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Initialize the inference service
-MODEL_PATH = "models/checkpoints/checkpoint_epoch_10.pt"
-VOCAB_PATH = "data/processed/vocab.txt"
+# Add the src directory to config loader path
+from config_loader import config
 
+# Initialize the inference service
 try:
-    service = MedicalQAInferenceService(MODEL_PATH, VOCAB_PATH)
+    service = MedicalQAInferenceService()  # Will use config values by default
     print("Medical QA Service initialized successfully!")
 except Exception as e:
     print(f"Error initializing Medical QA Service: {str(e)}")
@@ -58,4 +58,4 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run("app:app", host=config.api['host'], port=config.api['port'], reload=True)

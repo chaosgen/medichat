@@ -1,0 +1,39 @@
+# Model Configuration
+model:
+  hidden_size: 512
+  max_seq_length: 512
+  num_attention_heads: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dropout: 0.1
+
+# Training Configuration
+training:
+  batch_size: 32
+  learning_rate: 0.001
+  num_epochs: 100
+  eval_steps: 1000
+  save_steps: 5000
+
+# Data Configuration
+data:
+  raw_data_path: "data/raw/mle_screening_dataset.csv"
+  processed_data_dir: "data/processed"
+  train_file: "data/processed/train.csv"
+  eval_file: "data/processed/eval.csv"
+  test_file: "data/processed/test.csv"
+  vocab_file: "data/processed/vocab.txt"
+  eval_size: 0.1
+  test_size: 0.1
+
+# Model Paths
+paths:
+  checkpoint_dir: "models/checkpoints"
+  latest_checkpoint: "models/checkpoints/checkpoint_epoch_10.pt"
+  embedding_model: "models/embedding_model.pt"
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 5000
+  max_sequence_length: 100

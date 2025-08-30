@@ -5,24 +5,26 @@ import os
 from torch.utils.data import Dataset, DataLoader
 from simple_tokenizer import SimpleTokenizer
 
+from config_loader import config
+
 class MedicalTransformerConfig:
     def __init__(
         self,
         vocab_size: int,
-        max_seq_length: int = 512,
-        hidden_size: int = 256,
-        num_attention_heads: int = 4,
-        num_encoder_layers: int = 3,
-        num_decoder_layers: int = 3,
-        dropout: float = 0.1
+        max_seq_length: int = None,
+        hidden_size: int = None,
+        num_attention_heads: int = None,
+        num_encoder_layers: int = None,
+        num_decoder_layers: int = None,
+        dropout: float = None
     ):
         self.vocab_size = vocab_size
-        self.max_seq_length = max_seq_length
-        self.hidden_size = hidden_size
-        self.num_attention_heads = num_attention_heads
-        self.num_encoder_layers = num_encoder_layers
-        self.num_decoder_layers = num_decoder_layers
-        self.dropout = dropout
+        self.max_seq_length = max_seq_length or config.model['max_seq_length']
+        self.hidden_size = hidden_size or config.model['hidden_size']
+        self.num_attention_heads = num_attention_heads or config.model['num_attention_heads']
+        self.num_encoder_layers = num_encoder_layers or config.model['num_encoder_layers']
+        self.num_decoder_layers = num_decoder_layers or config.model['num_decoder_layers']
+        self.dropout = dropout or config.model['dropout']
 
 class MedicalTransformer(nn.Module):
     def __init__(self, config: MedicalTransformerConfig):
