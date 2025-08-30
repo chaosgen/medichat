@@ -30,8 +30,8 @@ app.add_middleware(
 )
 
 # Initialize the inference service
-MODEL_PATH = "../models/checkpoints/checkpoint_epoch_10.pt"
-VOCAB_PATH = "../data/processed/vocab.txt"
+MODEL_PATH = "models/checkpoints/checkpoint_epoch_10.pt"
+VOCAB_PATH = "data/processed/vocab.txt"
 
 try:
     service = MedicalQAInferenceService(MODEL_PATH, VOCAB_PATH)

@@ -16,9 +16,10 @@ class MedicalQAInferenceService:
         print("Initializing model...")
         config = MedicalTransformerConfig(
             vocab_size=len(self.tokenizer.vocab),
-            hidden_size=256,  # Should match training config
-            num_encoder_layers=3,
-            num_decoder_layers=3
+            hidden_size=512,  # Match the checkpoint architecture
+            num_attention_heads=8,
+            num_encoder_layers=6,
+            num_decoder_layers=6
         )
         self.model = MedicalTransformer(config).to(self.device)
         
