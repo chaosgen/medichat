@@ -300,8 +300,8 @@ python src/transformer_model.py \
     --test_path data/processed/test.csv \
     --vocab_path data/processed/vocab.txt \
     --checkpoint_dir models/checkpoints \
-    --hidden_size 256 \
-    --num_layers 3 \
+    --hidden_size 512 \
+    --num_layers 6 \
     --batch_size 32 \
-    --epochs 10
+    --epochs 100
 """
