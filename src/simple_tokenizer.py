@@ -99,7 +99,7 @@ if __name__ == "__main__":
     import pandas as pd
 
     # Load your dataset
-    df = pd.read_csv("data/raw/mle_screening_dataset.csv")
+    df = pd.read_csv(args.db_path)
 
     # Combine questions and answers into one list of texts
     texts = [str(x) for x in (df['question'].tolist() + df['answer'].tolist())]
@@ -109,4 +109,10 @@ if __name__ == "__main__":
     tokenizer.build_vocab(texts)
 
     # # Save vocabulary
-    tokenizer.save_vocab("data/processed/vocab.txt")
+    tokenizer.save_vocab(args.output_vocab)
+
+"""
+python src/simple_tokenizer.py \
+    --db_path data/raw/mle_screening_dataset.csv \
+    --output_vocab data/processed/vocab.txt
+"""
