@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Chat.css';
 
-const API_URL = 'http://localhost:5000/api/chat';
+const API_URL = 'http://localhost:5000/api/rag_chat';
 
 function Chat() {
     const [messages, setMessages] = useState([]);

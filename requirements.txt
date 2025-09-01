@@ -4,3 +4,9 @@ torch
 fastapi
 uvicorn
 pydantic
+pyyaml
+llama-cpp-python
+sentence-transformers
+chromadb
+requests
+tqdm

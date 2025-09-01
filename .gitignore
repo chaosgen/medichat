@@ -208,3 +208,4 @@ __marimo__/
 
 models/
 web/frontend/node_modules/
+data/vector_store/

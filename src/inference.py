@@ -3,27 +3,27 @@ import torch
 from transformer_model import MedicalTransformer, MedicalTransformerConfig
 from simple_tokenizer import SimpleTokenizer
 
+from config_loader import config
+
 class MedicalQAInferenceService:
-    def __init__(self, model_path, vocab_path, device=None):
+    def __init__(self, model_path=None, vocab_path=None, device=None):
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         print(f"\nInitializing Medical QA Service...")
         
         # Load tokenizer
+        vocab_path = vocab_path or config.get_path('data', 'vocab_file')
         print("Loading tokenizer...")
         self.tokenizer = SimpleTokenizer.load_vocab(vocab_path)
         
         # Initialize model
         print("Initializing model...")
-        config = MedicalTransformerConfig(
-            vocab_size=len(self.tokenizer.vocab),
-            hidden_size=512,  # Match the checkpoint architecture
-            num_attention_heads=8,
-            num_encoder_layers=6,
-            num_decoder_layers=6
+        model_config = MedicalTransformerConfig(
+            vocab_size=len(self.tokenizer.vocab)
         )
-        self.model = MedicalTransformer(config).to(self.device)
+        self.model = MedicalTransformer(model_config).to(self.device)
         
         # Load trained weights
+        model_path = model_path or config.get_path('paths', 'latest_checkpoint')
         print(f"Loading model weights from {model_path}...")
         try:
             checkpoint = torch.load(model_path, map_location=self.device)
